@@ -4,6 +4,7 @@ import folium
 from folium import CircleMarker, Popup
 from streamlit_folium import st_folium
 from matplotlib import cm, colors
+from matplotlib.colors import LinearSegmentedColormap
 
 # === Carregar os dados ===
 df = pd.read_excel("Escolas_Estaduais_Total.xlsx")
@@ -51,9 +52,28 @@ if regional != "Todas":
 
 # === Função de cor da nota ===
 def nota_para_cor(nota, vmin=0, vmax=1000):
+    cdict = {
+        'red':   [(0.0, 1.0, 1.0),  # vermelho (0)
+                  (0.5, 1.0, 1.0),  # branco (meio)
+                  (1.0, 0.0, 0.0)], # verde (1)
+        'green': [(0.0, 0.0, 0.0),
+                  (0.5, 1.0, 1.0),
+                  (1.0, 1.0, 1.0)],
+        'blue':  [(0.0, 0.0, 0.0),
+                  (0.5, 1.0, 1.0),
+                  (1.0, 0.0, 0.0)],
+    }
+         
+    custom_cmap = LinearSegmentedColormap('RedWhiteGreen', cdict)
+         
+    # Normalização
     norm = colors.Normalize(vmin=vmin, vmax=vmax)
-    cmap = cm.get_cmap('Reds')
-    return colors.to_hex(cmap(norm(nota)))
+    return colors.to_hex(custom_cmap(norm(nota)))
+
+# def nota_para_cor(nota, vmin=0, vmax=1000):
+#    norm = colors.Normalize(vmin=vmin, vmax=vmax)
+#    cmap = cm.get_cmap('Reds')
+#    return colors.to_hex(cmap(norm(nota)))
 
 # === Criar mapa ===
 mapa = folium.Map(
