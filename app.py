@@ -52,23 +52,17 @@ if regional != "Todas":
 
 # === Função de cor da nota ===
 def nota_para_cor(nota, vmin=0, vmax=1000):
-    cdict = {
-        'red':   [(0.0, 1.0, 1.0),  # vermelho (0)
-                  (0.5, 1.0, 1.0),  # branco (meio)
-                  (1.0, 0.0, 0.0)], # verde (1)
-        'green': [(0.0, 0.0, 0.0),
-                  (0.5, 1.0, 1.0),
-                  (1.0, 1.0, 1.0)],
-        'blue':  [(0.0, 0.0, 0.0),
-                  (0.5, 1.0, 1.0),
-                  (1.0, 0.0, 0.0)],
-    }
+    if nota <= 500:
+        # Gradiente de vermelho escuro até vermelho claro
+        cmap = LinearSegmentedColormap.from_list('red_gradient', ['darkred', 'lightcoral'], N=256)
+        norm = colors.Normalize(vmin=vmin, vmax=500)
+    else:
+        # Gradiente de verde claro até verde escuro
+        cmap = LinearSegmentedColormap.from_list('green_gradient', ['lightgreen', 'darkgreen'], N=256)
+        norm = colors.Normalize(vmin=500, vmax=vmax)
+
+    return colors.to_hex(cmap(norm(nota)))
          
-    custom_cmap = LinearSegmentedColormap('RedWhiteGreen', cdict)
-         
-    # Normalização
-    norm = colors.Normalize(vmin=vmin, vmax=vmax)
-    return colors.to_hex(custom_cmap(norm(nota)))
 
 # def nota_para_cor(nota, vmin=0, vmax=1000):
 #    norm = colors.Normalize(vmin=vmin, vmax=vmax)
